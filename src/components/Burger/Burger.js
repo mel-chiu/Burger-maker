@@ -1,6 +1,6 @@
 import React from 'react';
 import BurgerIngredients from './BurgerIngredients/BurgerIngredients';
-import classes from './Burger.css';
+import classes from './Burger.module.css';
 
 class Burger extends React.Component{
     render(){

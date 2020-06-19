@@ -1,77 +1,91 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import Auxi from '../../HOC/Auxi';
 import Burger from '../../components/Burger/Burger'
 import BuildControls from "../../components/BuildControls/BuildControls";
 
 const ingredientPrices = {
-    bacon:0.8,
-    meat:1.2,
-    salad:0.4,
-    cheese:0.5
+    bacon: 0.8,
+    meat: 1.2,
+    salad: 0.4,
+    cheese: 0.5
 }
 
-class BurgerBuilder extends Component{
-    state={
-        ingredients:{
+class BurgerBuilder extends Component {
+    state = {
+        ingredients: {
             bacon: 0,
             salad: 0,
             cheese: 0,
             meat: 0
         },
-        totalPrice: 4
+        totalPrice: 4,
+        purchase: false
 
     }
-    addIngredients=(type)=>{
+
+    updatePurchase = (ingredients) => {
+        
+        const sum = Object.keys(ingredients)
+        .map(ingredientsKey => {
+            return ingredients[ingredientsKey]
+        })
+        .reduce((sum, el)=>{
+            return sum + el;
+        },0);
+        this.setState({purchase:sum>0});
+    }
+    addIngredients = (type) => {
         const oldCount = this.state.ingredients[type];
-        const newCount = oldCount+1;
-        const upgradeIngredients = {...this.state.ingredients};
-        upgradeIngredients[type] = newCount; 
+        const newCount = oldCount + 1;
+        const upgradeIngredients = { ...this.state.ingredients };
+        upgradeIngredients[type] = newCount;
         const additionalPrice = ingredientPrices[type];
         const oldPrice = this.state.totalPrice;
         const newPrice = oldPrice + additionalPrice;
         this.setState({
             totalPrice: newPrice,
-            ingredients:upgradeIngredients
+            ingredients: upgradeIngredients
         })
-
+        this.updatePurchase(upgradeIngredients);
     }
 
-    removeIngredients=(type)=>{
+    removeIngredients = (type) => {
         const oldCount = this.state.ingredients[type];
-        if(oldCount<=0){
+        if (oldCount <= 0) {
             return;
         }
-        const newCount = oldCount-1;
-        const upgradeIngredients = {...this.state.ingredients};
-        upgradeIngredients[type] = newCount; 
+        const newCount = oldCount - 1;
+        const upgradeIngredients = { ...this.state.ingredients };
+        upgradeIngredients[type] = newCount;
         const priceDeduction = ingredientPrices[type];
         const oldPrice = this.state.totalPrice;
         const newPrice = oldPrice - priceDeduction;
         this.setState({
             totalPrice: newPrice,
-            ingredients:upgradeIngredients
+            ingredients: upgradeIngredients
         })
-
+        this.updatePurchase(upgradeIngredients);
     }
-    render(){
+    render() {
         const disabledInfo = {
             ...this.state.ingredients
         };
-        for (let key in disabledInfo){
-            disabledInfo[key] = disabledInfo[key]<=0;
+        for (let key in disabledInfo) {
+            disabledInfo[key] = disabledInfo[key] <= 0;
         }
-        return(
+        return (
             <Auxi>
-                <div>
-                    <Burger ingredients={this.state.ingredients}/>
-                </div>
-                <div>
-                    <BuildControls 
-                    addIngredients={this.addIngredients} 
-                    removeIngredients={this.removeIngredients} 
+
+                <Burger ingredients={this.state.ingredients} />
+
+                <BuildControls
+                    addIngredients={this.addIngredients}
+                    removeIngredients={this.removeIngredients}
                     disabled={disabledInfo}
-                    price={this.state.totalPrice}/>
-                </div>
+                    price={this.state.totalPrice} 
+                    purchase={this.state.purchase}/>
+
+
             </Auxi>
         );
     }

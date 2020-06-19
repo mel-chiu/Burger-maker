@@ -21,8 +21,12 @@
     height: 80%;
 }
 
-@media(max-width: 499px){
-    .DeskTopOnly{
+.Menu{
+    color: #FFF;
+}
+
+@media(max-width: 768px){
+    .DeskTopAndIpad{
         display: none;
     }
 }
